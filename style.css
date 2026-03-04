@@ -13,9 +13,9 @@ body {
 
 .container {
   background: white;
-  padding: 20px;
+  padding: 120px;
   width: 420px;
-  border-radius: 6px;
+  border-radius: 120px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
