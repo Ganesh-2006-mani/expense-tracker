@@ -1,19 +1,20 @@
 # Expense Tracker
 
-A simple web application built using **HTML, CSS, and JavaScript** to track income and expenses with automatic balance calculation.
+A web-based **Expense Tracker** built using HTML, CSS, and JavaScript to manage income and expenses with editing and chart visualization.
 
 ---
 
 ## 🚀 Features
 
 - Add income and expense records  
-- Automatically calculates:
+- Edit existing transactions  
+- Delete transactions  
+- Automatic calculation of:
   - Total income  
   - Total expense  
   - Balance  
-- Delete transactions  
-- Data stored using `localStorage`  
-- Simple and clean UI  
+- Visual chart (Income vs Expense)  
+- Data stored in `localStorage`
 
 ---
 
@@ -22,4 +23,5 @@ A simple web application built using **HTML, CSS, and JavaScript** to track inco
 - HTML5  
 - CSS3  
 - JavaScript (Vanilla JS)  
+- HTML Canvas (for chart)  
 - Browser localStorage  
