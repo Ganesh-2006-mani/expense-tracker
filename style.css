@@ -1,56 +1,81 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
 body {
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-  text-align: center;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .container {
-  max-width: 400px;
-  margin: auto;
+  background: white;
   padding: 20px;
+  width: 400px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
-input {
-  width: 90%;
-  padding: 10px;
-  margin: 5px;
+h2 {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+input, select {
+  padding: 6px;
+  flex: 1;
 }
 
 button {
-  padding: 10px;
-  background: #3b82f6;
+  background: #3498db;
   color: white;
   border: none;
   cursor: pointer;
+  padding: 6px 10px;
 }
 
-.summary {
-  display: flex;
-  justify-content: space-around;
+button:hover {
+  background: #2980b9;
 }
 
-#list {
+.summary p {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+ul {
   list-style: none;
   padding: 0;
 }
 
-#list li {
-  background: #1e293b;
-  margin: 5px;
-  padding: 10px;
+li {
   display: flex;
   justify-content: space-between;
+  margin: 6px 0;
+  padding: 5px;
+  border-radius: 4px;
 }
 
-.plus {
-  border-right: 5px solid green;
+li.income {
+  background: #d4edda;
 }
 
-.minus {
-  border-right: 5px solid red;
+li.expense {
+  background: #f8d7da;
 }
 
-#list button {
+.delete-btn {
   background: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
 }
