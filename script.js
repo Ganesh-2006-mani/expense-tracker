@@ -1,17 +1,19 @@
-// ELEMENTS
 const form = document.getElementById("form");
 const text = document.getElementById("text");
 const amount = document.getElementById("amount");
+const categoryEl = document.getElementById("category");
+
 const list = document.getElementById("list");
 
 const balance = document.getElementById("balance");
 const income = document.getElementById("income");
 const expense = document.getElementById("expense");
 
-// 🔥 LOAD FROM LOCALSTORAGE
+let chart;
+
+// LOAD DATA
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-// INIT
 init();
 
 function init() {
@@ -21,18 +23,19 @@ function init() {
 }
 
 // ADD TRANSACTION
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   if (text.value.trim() === "" || amount.value.trim() === "") {
-    alert("Enter description and amount");
+    alert("Enter all fields");
     return;
   }
 
   const transaction = {
     id: Date.now(),
     text: text.value,
-    amount: +amount.value
+    amount: +amount.value,
+    category: categoryEl.value
   };
 
   transactions.push(transaction);
@@ -46,47 +49,37 @@ form.addEventListener("submit", function(e) {
 });
 
 // ADD TO DOM
-function addTransactionDOM(transaction) {
-  const sign = transaction.amount < 0 ? "-" : "+";
-
+function addTransactionDOM(t) {
   const li = document.createElement("li");
-  li.classList.add(transaction.amount < 0 ? "minus" : "plus");
+  li.classList.add(t.amount < 0 ? "minus" : "plus");
 
   li.innerHTML = `
-    ${transaction.text} 
-    <span>${sign}₹${Math.abs(transaction.amount)}</span>
-    <button onclick="removeTransaction(${transaction.id})">x</button>
+    ${t.text} (${t.category})
+    <span>${t.amount < 0 ? "-" : "+"}₹${Math.abs(t.amount)}</span>
+    <button onclick="removeTransaction(${t.id})">x</button>
   `;
 
   list.appendChild(li);
 }
 
-// UPDATE BALANCE
+// UPDATE VALUES
 function updateValues() {
   const amounts = transactions.map(t => t.amount);
 
-  const total = amounts.reduce((acc, val) => acc + val, 0).toFixed(2);
-
-  const inc = amounts
-    .filter(val => val > 0)
-    .reduce((acc, val) => acc + val, 0)
-    .toFixed(2);
-
-  const exp = (
-    amounts
-      .filter(val => val < 0)
-      .reduce((acc, val) => acc + val, 0) * -1
-  ).toFixed(2);
+  const total = amounts.reduce((a, b) => a + b, 0);
+  const inc = amounts.filter(a => a > 0).reduce((a, b) => a + b, 0);
+  const exp = amounts.filter(a => a < 0).reduce((a, b) => a + b, 0) * -1;
 
   balance.innerText = `₹${total}`;
   income.innerText = `₹${inc}`;
   expense.innerText = `₹${exp}`;
+
+  updateCategoryChart();
 }
 
 // DELETE
 function removeTransaction(id) {
   transactions = transactions.filter(t => t.id !== id);
-
   updateLocalStorage();
   init();
 }
@@ -94,4 +87,40 @@ function removeTransaction(id) {
 // SAVE
 function updateLocalStorage() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+// CATEGORY CHART
+function updateCategoryChart() {
+  const map = {};
+
+  transactions.forEach(t => {
+    if (t.amount < 0) {
+      if (!map[t.category]) map[t.category] = 0;
+      map[t.category] += Math.abs(t.amount);
+    }
+  });
+
+  const labels = Object.keys(map);
+  const data = Object.values(map);
+
+  const ctx = document.getElementById("chart");
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: [
+          "#ef4444",
+          "#3b82f6",
+          "#22c55e",
+          "#f59e0b",
+          "#a855f7"
+        ]
+      }]
+    }
+  });
 }
