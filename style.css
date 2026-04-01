@@ -11,10 +11,11 @@ body {
   height: 100vh;
 }
 
+/* BIGGER MAIN BOX */
 .container {
   background: white;
   padding: 20px;
-  width: 420px;
+  width: 800px;              /* 🔥 increased */
   border-radius: 6px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
@@ -24,43 +25,57 @@ h2 {
 }
 
 form {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;   /* equal form layout */
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 input, select {
-  padding: 6px;
-  flex: 1;
+  padding: 8px;
 }
 
+/* BUTTON */
 button {
   background: #3498db;
   color: white;
   border: none;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 8px;
 }
 
 button:hover {
   background: #2980b9;
 }
 
+/* ===== SUMMARY BOXES ===== */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);   /* ✅ equal boxes */
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
 .summary p {
-  margin: 4px 0;
+  background: #ecf0f1;
+  padding: 15px;
+  border-radius: 5px;
+  text-align: center;
   font-weight: bold;
 }
 
+/* LIST */
 ul {
   list-style: none;
   padding: 0;
 }
 
 li {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 3fr 1fr;   /* text | buttons */
+  align-items: center;
   margin: 6px 0;
-  padding: 5px;
+  padding: 8px;
   border-radius: 4px;
 }
 
@@ -88,4 +103,10 @@ li.expense {
   color: white;
   border: none;
   cursor: pointer;
+}
+
+/* CHART CENTER */
+canvas {
+  display: block;
+  margin: 0 auto 15px;
 }
