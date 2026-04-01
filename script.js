@@ -8,14 +8,18 @@ const incomeEl = document.getElementById("income");
 const expenseEl = document.getElementById("expense");
 const balanceEl = document.getElementById("balance");
 
+const canvas = document.getElementById("chart");
+const ctx = canvas.getContext("2d");
+
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+let editIndex = -1;
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-  addTransaction();
+  addOrUpdateTransaction();
 });
 
-function addTransaction() {
+function addOrUpdateTransaction() {
   const title = titleInput.value.trim();
   const amount = amountInput.value.trim();
   const type = typeSelect.value;
@@ -31,7 +35,13 @@ function addTransaction() {
     type
   };
 
-  transactions.push(transaction);
+  if (editIndex === -1) {
+    transactions.push(transaction);
+  } else {
+    transactions[editIndex] = transaction;
+    editIndex = -1;
+  }
+
   saveData();
   updateUI();
 
@@ -51,7 +61,10 @@ function updateUI() {
 
     li.innerHTML = `
       ${t.title} - ₹${t.amount}
-      <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
+      <span class="btns">
+        <button class="edit-btn" onclick="editTransaction(${index})">Edit</button>
+        <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
+      </span>
     `;
 
     list.appendChild(li);
@@ -63,6 +76,16 @@ function updateUI() {
   incomeEl.innerText = income;
   expenseEl.innerText = expense;
   balanceEl.innerText = income - expense;
+
+  drawChart(income, expense);
+}
+
+function editTransaction(index) {
+  const t = transactions[index];
+  titleInput.value = t.title;
+  amountInput.value = t.amount;
+  typeSelect.value = t.type;
+  editIndex = index;
 }
 
 function deleteTransaction(index) {
@@ -73,6 +96,29 @@ function deleteTransaction(index) {
 
 function saveData() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+function drawChart(income, expense) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const total = income + expense;
+  if (total === 0) return;
+
+  const incomeAngle = (income / total) * Math.PI * 2;
+
+  // Income slice
+  ctx.beginPath();
+  ctx.moveTo(150, 100);
+  ctx.fillStyle = "#2ecc71";
+  ctx.arc(150, 100, 80, 0, incomeAngle);
+  ctx.fill();
+
+  // Expense slice
+  ctx.beginPath();
+  ctx.moveTo(150, 100);
+  ctx.fillStyle = "#e74c3c";
+  ctx.arc(150, 100, 80, incomeAngle, Math.PI * 2);
+  ctx.fill();
 }
 
 updateUI();
