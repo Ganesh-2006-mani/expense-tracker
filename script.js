@@ -1,124 +1,97 @@
-const form = document.getElementById("expenseForm");
-const titleInput = document.getElementById("title");
-const amountInput = document.getElementById("amount");
-const typeSelect = document.getElementById("type");
+// ELEMENTS
+const form = document.getElementById("form");
+const text = document.getElementById("text");
+const amount = document.getElementById("amount");
 const list = document.getElementById("list");
 
-const incomeEl = document.getElementById("income");
-const expenseEl = document.getElementById("expense");
-const balanceEl = document.getElementById("balance");
+const balance = document.getElementById("balance");
+const income = document.getElementById("income");
+const expense = document.getElementById("expense");
 
-const canvas = document.getElementById("chart");
-const ctx = canvas.getContext("2d");
-
+// 🔥 LOAD FROM LOCALSTORAGE
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-let editIndex = -1;
 
-form.addEventListener("submit", function (e) {
+// INIT
+init();
+
+function init() {
+  list.innerHTML = "";
+  transactions.forEach(addTransactionDOM);
+  updateValues();
+}
+
+// ADD TRANSACTION
+form.addEventListener("submit", function(e) {
   e.preventDefault();
-  addOrUpdateTransaction();
-});
 
-function addOrUpdateTransaction() {
-  const title = titleInput.value.trim();
-  const amount = amountInput.value.trim();
-  const type = typeSelect.value;
-
-  if (title === "" || amount === "") {
-    alert("Enter title and amount");
+  if (text.value.trim() === "" || amount.value.trim() === "") {
+    alert("Enter description and amount");
     return;
   }
 
   const transaction = {
-    title,
-    amount: Number(amount),
-    type
+    id: Date.now(),
+    text: text.value,
+    amount: +amount.value
   };
 
-  if (editIndex === -1) {
-    transactions.push(transaction);
-  } else {
-    transactions[editIndex] = transaction;
-    editIndex = -1;
-  }
+  transactions.push(transaction);
 
-  saveData();
-  updateUI();
+  addTransactionDOM(transaction);
+  updateValues();
+  updateLocalStorage();
 
-  titleInput.value = "";
-  amountInput.value = "";
+  text.value = "";
+  amount.value = "";
+});
+
+// ADD TO DOM
+function addTransactionDOM(transaction) {
+  const sign = transaction.amount < 0 ? "-" : "+";
+
+  const li = document.createElement("li");
+  li.classList.add(transaction.amount < 0 ? "minus" : "plus");
+
+  li.innerHTML = `
+    ${transaction.text} 
+    <span>${sign}₹${Math.abs(transaction.amount)}</span>
+    <button onclick="removeTransaction(${transaction.id})">x</button>
+  `;
+
+  list.appendChild(li);
 }
 
-function updateUI() {
-  list.innerHTML = "";
+// UPDATE BALANCE
+function updateValues() {
+  const amounts = transactions.map(t => t.amount);
 
-  let income = 0;
-  let expense = 0;
+  const total = amounts.reduce((acc, val) => acc + val, 0).toFixed(2);
 
-  transactions.forEach((t, index) => {
-    const li = document.createElement("li");
-    li.classList.add(t.type);
+  const inc = amounts
+    .filter(val => val > 0)
+    .reduce((acc, val) => acc + val, 0)
+    .toFixed(2);
 
-    li.innerHTML = `
-      ${t.title} - ₹${t.amount}
-      <span class="btns">
-        <button class="edit-btn" onclick="editTransaction(${index})">Edit</button>
-        <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
-      </span>
-    `;
+  const exp = (
+    amounts
+      .filter(val => val < 0)
+      .reduce((acc, val) => acc + val, 0) * -1
+  ).toFixed(2);
 
-    list.appendChild(li);
-
-    if (t.type === "income") income += t.amount;
-    else expense += t.amount;
-  });
-
-  incomeEl.innerText = income;
-  expenseEl.innerText = expense;
-  balanceEl.innerText = income - expense;
-
-  drawChart(income, expense);
+  balance.innerText = `₹${total}`;
+  income.innerText = `₹${inc}`;
+  expense.innerText = `₹${exp}`;
 }
 
-function editTransaction(index) {
-  const t = transactions[index];
-  titleInput.value = t.title;
-  amountInput.value = t.amount;
-  typeSelect.value = t.type;
-  editIndex = index;
+// DELETE
+function removeTransaction(id) {
+  transactions = transactions.filter(t => t.id !== id);
+
+  updateLocalStorage();
+  init();
 }
 
-function deleteTransaction(index) {
-  transactions.splice(index, 1);
-  saveData();
-  updateUI();
-}
-
-function saveData() {
+// SAVE
+function updateLocalStorage() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
-
-function drawChart(income, expense) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const total = income + expense;
-  if (total === 0) return;
-
-  const incomeAngle = (income / total) * Math.PI * 2;
-
-  // Income slice
-  ctx.beginPath();
-  ctx.moveTo(150, 100);
-  ctx.fillStyle = "#2ecc71";
-  ctx.arc(150, 100, 80, 0, incomeAngle);
-  ctx.fill();
-
-  // Expense slice
-  ctx.beginPath();
-  ctx.moveTo(150, 100);
-  ctx.fillStyle = "#e74c3c";
-  ctx.arc(150, 100, 80, incomeAngle, Math.PI * 2);
-  ctx.fill();
-}
-
-updateUI();
