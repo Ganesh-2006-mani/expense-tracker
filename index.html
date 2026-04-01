@@ -11,13 +11,13 @@
   <h2>Expense Tracker</h2>
 
   <form id="expenseForm">
-    <input type="text" id="title" placeholder="Expense Title">
+    <input type="text" id="title" placeholder="Title">
     <input type="number" id="amount" placeholder="Amount">
     <select id="type">
       <option value="income">Income</option>
       <option value="expense">Expense</option>
     </select>
-    <button type="submit">Add</button>
+    <button type="submit">Add / Update</button>
   </form>
 
   <div class="summary">
@@ -25,6 +25,8 @@
     <p>Total Expense: ₹<span id="expense">0</span></p>
     <p>Balance: ₹<span id="balance">0</span></p>
   </div>
+
+  <canvas id="chart" width="300" height="200"></canvas>
 
   <ul id="list"></ul>
 </div>
