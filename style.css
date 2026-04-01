@@ -1,112 +1,60 @@
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
-  background: #f2f2f2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-/* BIGGER MAIN BOX */
-.container {
-  background: white;
-  padding: 20px;
-  width: 800px;              /* 🔥 increased */
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-h2 {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
   text-align: center;
 }
 
-form {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;   /* equal form layout */
-  gap: 10px;
-  margin-bottom: 15px;
+.container {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
 }
 
 input, select {
-  padding: 8px;
+  width: 90%;
+  padding: 10px;
+  margin: 5px;
 }
 
-/* BUTTON */
 button {
-  background: #3498db;
+  padding: 10px;
+  background: #3b82f6;
   color: white;
   border: none;
   cursor: pointer;
-  padding: 8px;
 }
 
-button:hover {
-  background: #2980b9;
-}
-
-/* ===== SUMMARY BOXES ===== */
 .summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);   /* ✅ equal boxes */
-  gap: 10px;
-  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-around;
 }
 
-.summary p {
-  background: #ecf0f1;
-  padding: 15px;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* LIST */
-ul {
+#list {
   list-style: none;
   padding: 0;
 }
 
-li {
-  display: grid;
-  grid-template-columns: 3fr 1fr;   /* text | buttons */
-  align-items: center;
-  margin: 6px 0;
-  padding: 8px;
-  border-radius: 4px;
+#list li {
+  background: #1e293b;
+  margin: 5px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
-li.income {
-  background: #d4edda;
+#list li.plus {
+  border-right: 5px solid green;
 }
 
-li.expense {
-  background: #f8d7da;
+#list li.minus {
+  border-right: 5px solid red;
 }
 
-.btns button {
-  margin-left: 5px;
-}
-
-.delete-btn {
+#list button {
   background: red;
-  color: white;
-  border: none;
-  cursor: pointer;
 }
 
-.edit-btn {
-  background: orange;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-/* CHART CENTER */
 canvas {
-  display: block;
-  margin: 0 auto 15px;
+  margin-top: 20px;
 }
