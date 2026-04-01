@@ -9,9 +9,9 @@ const balance = document.getElementById("balance");
 const income = document.getElementById("income");
 const expense = document.getElementById("expense");
 
-let chart;
+let pieChart;
+let lineChart;
 
-// LOAD DATA
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
 init();
@@ -35,7 +35,8 @@ form.addEventListener("submit", (e) => {
     id: Date.now(),
     text: text.value,
     amount: +amount.value,
-    category: categoryEl.value
+    category: categoryEl.value,
+    date: new Date().toISOString()
   };
 
   transactions.push(transaction);
@@ -75,6 +76,7 @@ function updateValues() {
   expense.innerText = `₹${exp}`;
 
   updateCategoryChart();
+  updateMonthlyChart();
 }
 
 // DELETE
@@ -89,7 +91,7 @@ function updateLocalStorage() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
-// CATEGORY CHART
+// 🔥 CATEGORY PIE CHART
 function updateCategoryChart() {
   const map = {};
 
@@ -100,27 +102,75 @@ function updateCategoryChart() {
     }
   });
 
-  const labels = Object.keys(map);
-  const data = Object.values(map);
-
   const ctx = document.getElementById("chart");
 
-  if (chart) chart.destroy();
+  if (pieChart) pieChart.destroy();
 
-  chart = new Chart(ctx, {
+  pieChart = new Chart(ctx, {
     type: "pie",
     data: {
-      labels: labels,
+      labels: Object.keys(map),
       datasets: [{
-        data: data,
-        backgroundColor: [
-          "#ef4444",
-          "#3b82f6",
-          "#22c55e",
-          "#f59e0b",
-          "#a855f7"
-        ]
+        data: Object.values(map),
+        backgroundColor: ["#ef4444","#3b82f6","#22c55e","#f59e0b","#a855f7"]
       }]
+    }
+  });
+}
+
+// 🔥 MONTHLY LINE CHART (INCOME / EXPENSE / BALANCE)
+function updateMonthlyChart() {
+  const monthly = {};
+
+  transactions.forEach(t => {
+    const date = new Date(t.date);
+    const key = `${date.getFullYear()}-${date.getMonth()+1}`;
+
+    if (!monthly[key]) {
+      monthly[key] = { income: 0, expense: 0 };
+    }
+
+    if (t.amount > 0) {
+      monthly[key].income += t.amount;
+    } else {
+      monthly[key].expense += Math.abs(t.amount);
+    }
+  });
+
+  const labels = Object.keys(monthly);
+
+  const incomeData = labels.map(m => monthly[m].income);
+  const expenseData = labels.map(m => monthly[m].expense);
+  const balanceData = labels.map(m => monthly[m].income - monthly[m].expense);
+
+  const ctx = document.getElementById("lineChart");
+
+  if (lineChart) lineChart.destroy();
+
+  lineChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Income",
+          data: incomeData,
+          borderColor: "green",
+          fill: false
+        },
+        {
+          label: "Expense",
+          data: expenseData,
+          borderColor: "red",
+          fill: false
+        },
+        {
+          label: "Balance",
+          data: balanceData,
+          borderColor: "blue",
+          fill: false
+        }
+      ]
     }
   });
 }
