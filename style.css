@@ -6,12 +6,12 @@ body {
 }
 
 .container {
-  max-width: 500px;
+  max-width: 400px;
   margin: auto;
   padding: 20px;
 }
 
-input, select {
+input {
   width: 90%;
   padding: 10px;
   margin: 5px;
@@ -43,18 +43,14 @@ button {
   justify-content: space-between;
 }
 
-#list li.plus {
+.plus {
   border-right: 5px solid green;
 }
 
-#list li.minus {
+.minus {
   border-right: 5px solid red;
 }
 
 #list button {
   background: red;
-}
-
-canvas {
-  margin-top: 20px;
 }
